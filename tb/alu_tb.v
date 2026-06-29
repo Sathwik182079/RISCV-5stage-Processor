@@ -27,7 +27,7 @@ module alu_tb;
                 operand_b,
                 ALU_control,
                 ALU_result,         
-                zeros
+                zero 
 );
        //ADD
         operand_a   = 32'd20;
