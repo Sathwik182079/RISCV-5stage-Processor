@@ -16,7 +16,7 @@
 // • One Synchronous Write Port
 // • Register x0 is Hardwired to Zero
 //-----------------------------------------------------
-
+ `timescale 1ns/1ps
 
 module register_file (
     input clk,
