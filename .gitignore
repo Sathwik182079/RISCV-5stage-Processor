@@ -1,0 +1,25 @@
+# Vivado
+.Xil/
+.cache/
+.hw/
+.ip_user_files/
+.sim/
+.gen/
+.runs/
+
+# Logs
+*.jou
+*.log
+*.str
+
+# Waveforms
+*.wdb
+*.wcfg
+*.vcd
+
+# Temporary
+*.pb
+*.tmp
+
+# macOS
+.DS_Store
