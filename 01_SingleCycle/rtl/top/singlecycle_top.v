@@ -15,7 +15,7 @@ wire [1:0] writebacksel;
 wire Branch; 
 wire Jump;
 wire jumpreg;
-wire [1:0] ALUOp;
+wire [1:0] ALUOp; 
 
 // ALU Control
 

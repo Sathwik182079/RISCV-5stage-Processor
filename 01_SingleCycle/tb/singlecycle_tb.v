@@ -1,9 +1,3 @@
-//=====================================================
-// Testbench : Single Cycle RISC-V Processor
-// Project   : 5-Stage Pipelined RISC-V Processor
-// Author    : T. Sathwik
-//=====================================================
-
 `timescale 1ns/1ps
 
 module singlecycle_top_tb;
@@ -16,20 +10,16 @@ reg reset;
 //-----------------------------------------------------
 
 singlecycle_top dut(
-
     .clk(clk),
     .reset(reset)
-
 );
 
 //-----------------------------------------------------
-// Clock Generation (100 MHz)
+// Clock Generation
 //-----------------------------------------------------
 
-initial
-begin
+initial begin
     clk = 1'b0;
-
     forever #5 clk = ~clk;
 end
 
@@ -37,45 +27,39 @@ end
 // Reset Generation
 //-----------------------------------------------------
 
-initial
-begin
-
+initial begin
     reset = 1'b1;
-
     #20;
-
     reset = 1'b0;
-
-end
-
-initial
-begin
-
-    $monitor(
-        "Time=%0t  PC=%h  Instr=%h  ALU=%h",
-        $time,
-        dut.dp.program_counter,
-        dut.dp.instruction,
-        dut.dp.alu_result
-    );
-
 end
 
 //-----------------------------------------------------
-// Simulation Control
+// Monitor
 //-----------------------------------------------------
 
-initial
+always @(posedge clk)
 begin
+    $display("Time=%0t PC=%h Instr=%h ALU=%h RD=%0d WD=%h WE=%b X1=%h X2=%h X3=%h X4=%h",
+             $time,
+             dut.dp.program_counter,
+             dut.dp.instruction,
+             dut.dp.alu_result,
+             dut.dp.rd,
+             dut.dp.write_back_data,
+             dut.RegWrite,
+             dut.dp.rf.registers[1],
+             dut.dp.rf.registers[2],
+             dut.dp.rf.registers[3],
+             dut.dp.rf.registers[4]);
+end
 
+//-----------------------------------------------------
+// Simulation End
+//-----------------------------------------------------
+
+initial begin
     #300;
-
     $finish;
-
 end
-
-//-----------------------------------------------------
-// Monitor Signals
-//-----------------------------------------------------
 
 endmodule
