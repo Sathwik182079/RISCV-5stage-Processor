@@ -26,7 +26,7 @@ module instruction_memory(
 );
 
     reg [31:0] memory [0:255]; 
-
+ integer i;
 initial
 begin
 
@@ -35,7 +35,7 @@ begin
       memory[2] = 32'h002081B3;   // add x3,x1,x2
       memory[3] = 32'h40118233;   // sub x4,x3,x1
 
-          for(i = 0; i < 256; i = i + 1)
+          for(i = ; i < 256; i = i + 1)
         memory[i] = 32'h00000013;   // addi x0,x0,0 (NOP)
 
 

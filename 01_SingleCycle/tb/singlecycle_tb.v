@@ -48,6 +48,19 @@ begin
 
 end
 
+initial
+begin
+
+    $monitor(
+        "Time=%0t  PC=%h  Instr=%h  ALU=%h",
+        $time,
+        dut.dp.program_counter,
+        dut.dp.instruction,
+        dut.dp.alu_result
+    );
+
+end
+
 //-----------------------------------------------------
 // Simulation Control
 //-----------------------------------------------------
@@ -64,18 +77,5 @@ end
 //-----------------------------------------------------
 // Monitor Signals
 //-----------------------------------------------------
-
-initial
-begin
-
-    $monitor(
-        "Time=%0t  PC=%h  Instr=%h  ALU=%h",
-        $time,
-        dut.dp.program_counter,
-        dut.dp.instruction,
-        dut.dp.alu_result
-    );
-
-end
 
 endmodule
