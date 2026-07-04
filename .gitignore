@@ -1,25 +1,25 @@
-# Vivado
-.Xil/
-.cache/
-.hw/
-.ip_user_files/
-.sim/
-.gen/
-.runs/
-
-# Logs
+# Vivado generated files
+vivado/
 *.jou
 *.log
 *.str
-
-# Waveforms
-*.wdb
 *.wcfg
-*.vcd
-
-# Temporary
+*.cache
+*.hw
+*.sim
+*.runs
+*.Xil
 *.pb
-*.tmp
+*.xml
 
-# macOS
+# Vivado project generated folders
+*.ip_user_files
+*.gen
+
+# Temporary files
+*.tmp
+*.bak
+
+# OS files
 .DS_Store
+Thumbs.db
