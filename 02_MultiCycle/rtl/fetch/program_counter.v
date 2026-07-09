@@ -21,23 +21,23 @@
 module program_counter(
      input clk,
      input reset,
-
+     input Program_Counter_Write,
      input [31:0] program_counter_next ,
      output reg [31:0] program_counter
 );
 
 
 always @(posedge clk or posedge reset)
- begin
-     if (reset )
-      begin
-         program_counter <= 32'd0;
-      end
-     else 
-       begin
+begin
+    if(reset)
+    begin
+        program_counter <= 32'd0;
+    end
+    else if(Program_Counter_Write)
+    begin
         program_counter <= program_counter_next;
-       end 
- end
+    end
+end
 
  
 endmodule
