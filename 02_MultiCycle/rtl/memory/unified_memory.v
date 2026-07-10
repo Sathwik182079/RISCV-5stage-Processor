@@ -8,12 +8,14 @@ module memory(
     output reg [31:0] ReadData
 );
     reg [31:0] ram [0:255]; 
-
     integer i;
+    
     initial
      begin
         for ( i = 0; i < 256; i = i + 1) begin
             ram[i] = 32'd0;
+
+ 
         end
 
         // --- I-Type & R-Type Arithmetic ---
