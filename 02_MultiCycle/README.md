@@ -2,14 +2,11 @@
 
 ## Overview
 
-This project implements a **32-bit Multi-Cycle RISC-V (RV32I) Processor** using **Verilog HDL**.
+This project implements a **32-bit Multi-Cycle RISC-V (RV32I) Processor** using **Verilog HDL**, based on the **Harris & Harris Computer Organization and Design** multi-cycle architecture.
 
-Unlike a single-cycle processor, each instruction is executed over multiple clock cycles using a **Finite State Machine (FSM)** controller. Hardware resources such as the ALU and memory are reused across different execution stages, reducing hardware complexity while improving resource utilization.
+Unlike the Single Cycle processor, instructions are executed over multiple clock cycles by reusing the same hardware resources, significantly reducing hardware complexity while maintaining full processor functionality.
 
-This implementation serves as the second stage of a complete processor development roadmap.
-
-Upcoming implementation:
-- 5-Stage Pipelined RISC-V Processor
+This implementation serves as the second stage of the processor development roadmap before implementing the 5-Stage Pipelined Processor.
 
 ---
 
@@ -17,13 +14,12 @@ Upcoming implementation:
 
 - 32-bit RV32I Architecture
 - Multi-Cycle Datapath
-- FSM-Based Controller
+- Finite State Machine (FSM) Controller
 - Unified Instruction/Data Memory
-- Modular Verilog Design
-- Program Counter with Write Enable
-- ALU Control Unit
-- Immediate Generator
+- Shared ALU Architecture
 - Temporary Datapath Registers
+- Modular Verilog Design
+- Reduced Hardware Through Resource Sharing
 
 ---
 
@@ -42,13 +38,6 @@ Upcoming implementation:
 
 ### I-Type
 - ADDI
-- ANDI
-- ORI
-- XORI
-- SLLI
-- SRLI
-- SRAI
-- SLTI
 
 ### Memory Instructions
 - LW
@@ -57,39 +46,35 @@ Upcoming implementation:
 ### Branch & Jump Instructions
 - BEQ
 - JAL
+- JALR
 
 ---
 
 ## Processor Modules
 
-### Fetch Stage
+### Fetch
 - Program Counter
-- Instruction Register
 - Unified Memory
+- Instruction Register
+- Old Program Counter Register
 
-### Decode Stage
+### Decode
 - Register File
 - Immediate Generator
-- Controller FSM
+- A Register
+- WriteData Register
 
-### Execute Stage
+### Execute
 - ALU
 - ALU Control Unit
+- ALUOut Register
 
-### Memory Stage
+### Memory
 - Unified Memory
 - Data Register
 
-### Write Back Stage
-- Result Multiplexer
-
-### Temporary Registers
-- Old Program Counter Register
-- A Register
-- WriteData Register
-- ALUOut Register
-- Data Register
-- Instruction Register
+### Control
+- Finite State Machine Controller
 
 ### Top-Level Integration
 - Multi-Cycle Datapath
@@ -97,25 +82,22 @@ Upcoming implementation:
 
 ---
 
-## Controller States
+## Temporary Registers
 
-- FETCH
-- DECODE
-- MEMADR
-- MEMREAD
-- MEMWB
-- MEMWRITE
-- EXECUTER
-- EXECUTEI
-- ALUWB
-- BRANCH
-- JAL
+The processor implements the temporary registers described in the Harris & Harris Multi-Cycle architecture.
+
+- Instruction Register (IR)
+- Old Program Counter (OldPC)
+- A Register
+- WriteData Register
+- ALUOut Register
+- Data Register
 
 ---
 
 ## Project Structure
 
-```
+```text
 02_MultiCycle/
 │
 ├── rtl/
@@ -155,20 +137,60 @@ Upcoming implementation:
 |-----------|:------:|
 | RTL Design | ✅ Complete |
 | Module Integration | ✅ Complete |
+| FSM Controller | ✅ Complete |
+| Datapath | ✅ Complete |
 | Testbench | ✅ Complete |
-| Functional Simulation | ⏳ Pending |
-| Waveform Verification | ⏳ Pending |
+| Functional Simulation | ✅ Complete |
+| Waveform Verification | ✅ Complete |
 | RTL Schematic | ⏳ Pending |
+| Timing Simulation | ⏳ Pending |
+
+---
+
+## Verified Functionality
+
+The processor has been functionally verified through simulation for:
+
+- ADD
+- SUB
+- ADDI
+- LW
+- SW
+- BEQ
+- JAL
+- JALR
+- AND
+
+Simulation confirms:
+
+- Correct FSM state transitions
+- Correct Program Counter updates
+- Correct register write-back
+- Correct memory read/write operations
+- Correct branch execution
+- Correct jump execution
+- Correct ALU operation selection
+
+---
+
+## Design Highlights
+
+- Harris & Harris Multi-Cycle Datapath
+- Hardware resource sharing using a single ALU
+- Finite State Machine based control
+- Temporary register architecture
+- Unified instruction and data memory
+- Modular and reusable RTL implementation
 
 ---
 
 ## Future Improvements
 
-- Functional Verification
 - RTL Schematic Generation
-- Waveform Analysis
-- Complete RV32I Instruction Support
-- Documentation Improvements
+- Timing Simulation
+- Documentation Enhancement
+- Performance Analysis
+- FPGA Implementation
 - 5-Stage Pipelined Processor
 
 ---
@@ -185,7 +207,7 @@ Indian Institute of Technology Bhubaneswar
 
 ## Project Roadmap
 
-```
+```text
 ✅ Single Cycle Processor
 ✅ Multi-Cycle Processor
 ⬜ 5-Stage Pipelined Processor

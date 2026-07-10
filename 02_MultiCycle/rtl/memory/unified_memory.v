@@ -7,14 +7,12 @@ module memory(
     input [31:0] WriteData,
     output reg [31:0] ReadData
 );
-    // 256 words of unified memory
     reg [31:0] ram [0:255]; 
 
-    // Initialize with your program instructions here
-    // Initialize with the Ultimate Test Program
-    initial begin
-        // Good practice: Initialize all memory to 0 first to avoid 'X' (unknown) states
-        for (integer i = 0; i < 256; i = i + 1) begin
+    integer i;
+    initial
+     begin
+        for ( i = 0; i < 256; i = i + 1) begin
             ram[i] = 32'd0;
         end
 
