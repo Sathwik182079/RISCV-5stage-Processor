@@ -16,7 +16,7 @@ module control_unit(
         output reg MemRead,
         output reg MemWrite,
         output reg ALUSrc,
-        output reg [1:0]result_src,
+        output reg [1:0] result_src,
         output reg Branch,
         output reg Jump,
         output reg jumpreg,
