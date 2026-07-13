@@ -52,8 +52,8 @@ assign JALR_target = ALU_result & 32'hFFFFFFFE;
 assign program_counter_plus4 = program_counter + 32'd4;
 assign next_program_counter =
         (JALRTaken) ? JALR_target :
-        (JumpTaken) ? EX_MEM_branch_target :
-        (program_counter_src) ? EX_MEM_branch_target :
+        (JumpTaken) ? branch_target :
+        (program_counter_src) ? branch_target :
                                 program_counter_plus4;
 
 
