@@ -34,13 +34,9 @@ always @(posedge clk or posedge reset)
          program_counter <= 32'd0;
       end
       else if(en)
-begin
+    begin
     program_counter <= program_counter_next;
-end
-     else 
-       begin
-        program_counter <= program_counter_next;
-       end 
+    end
  end
 
  

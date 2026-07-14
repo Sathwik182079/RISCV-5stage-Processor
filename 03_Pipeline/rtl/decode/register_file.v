@@ -1,22 +1,4 @@
-//=====================================================
-// Module : Register File
-// Project: 5-Stage Pipelined RISC-V Processor
-// Author : T. Sathwik
-// Date   :
-//=====================================================
-
-//-----------------------------------------------------
-// Description:
-// Implements the 32 × 32-bit Register File for the
-// RISC-V RV32I processor.
-//
-// Features:
-// • 32 General Purpose Registers (x0–x31)
-// • Two Combinational Read Ports
-// • One Synchronous Write Port
-// • Register x0 is Hardwired to Zero
-//-----------------------------------------------------
- `timescale 1ns/1ps
+`timescale 1ns/1ps
 
 module register_file (
     input clk,
@@ -29,52 +11,34 @@ module register_file (
     output reg [31:0] read_data2
 );
 
-   reg [31:0] registers [0:31]; 
-   integer i;
+    reg [31:0] registers [0:31]; 
+    integer i;
 
- initial
-      begin
-            for(i = 0; i < 32; i = i + 1)
-           begin
-               registers[i] = 32'd0;
-           end
+    initial begin
+        for(i = 0; i < 32; i = i + 1) begin
+            registers[i] = 32'd0;
+        end
+    end
+
+    always @(*) begin
+        if (write_enable && (rd == rs1) && (rd != 5'd0)) begin
+            read_data1 = write_data;
+        end else begin
+            read_data1 = registers[rs1]; 
         end
 
-   always @(*)
-
-        begin
-            read_data1 = registers[rs1]; 
+        if (write_enable && (rd == rs2) && (rd != 5'd0)) begin
+            read_data2 = write_data;
+        end else begin
             read_data2 = registers[rs2]; 
         end
+    end
  
+    // Synchronous Write
+    always @(posedge clk) begin 
+        if (write_enable && rd != 5'd0) begin 
+            registers[rd] <= write_data;
+        end 
+    end
 
- always @(posedge clk)
-        begin 
-            if (write_enable )
-
-                begin 
-                    if(rd!=5'd0)
-                    begin
-                    registers[rd] <= write_data;
-                    end 
-                end 
-
-                registers[0] <= 32'd0; 
-        end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-endmodule 
+endmodule
