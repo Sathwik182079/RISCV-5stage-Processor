@@ -37,7 +37,6 @@ always @(posedge clk or posedge reset)
 begin
     program_counter <= program_counter_next;
 end
-  
  end
 
  
