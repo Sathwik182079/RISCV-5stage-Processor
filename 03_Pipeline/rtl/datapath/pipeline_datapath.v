@@ -25,19 +25,30 @@ wire [31:0] instruction;
 wire [31:0] IF_ID_program_counter;
 wire [31:0] IF_ID_program_counter_plus4;
 wire [31:0] IF_ID_instruction;
+wire [1:0] ForwardA;
+wire [1:0] ForwardB;
 
-program_counter program_counter1 (
+wire program_counter_Write;
+wire IF_ID_Write;
+
+wire Flush_IF_ID;
+wire Flush_ID_EX;
+
+program_counter program_counter1(
 
     .clk(clk),
     .reset(reset),
 
-    .program_counter_next(next_program_counter),  //program_counter_in is program_counter_next
-    .program_counter(program_counter) // program_counter_in is program_counter
+    .en(program_counter_Write),
+
+    .program_counter_next(next_program_counter),
+    .program_counter(program_counter)
 
 );
 wire program_counter_src;
 
-assign program_counter_src = Branch_EX & zero;
+assign program_counter_src =
+        Branch_EX & zero;
 
 wire JumpTaken;
 wire JALRTaken;
@@ -63,15 +74,16 @@ instruction_memory im(
     .instruction(instruction)
 );
 
+
+
 // IF/ID Pipeline Register
 IF_ID IF_ID_(
 
     .clk(clk),
     .reset(reset),
 
-    .en(1'b1),
-    .clear(1'b0),
-
+   .en(IF_ID_Write),
+   .clear(Flush_IF_ID),
     .program_counter_in(program_counter),
     .instruction_in(instruction),
     .program_counter_plus4_in(program_counter_plus4),
@@ -203,7 +215,7 @@ ID_EX ID_EX_REG(
     .reset(reset),
 
     .en(1'b1),
-    .clear(1'b0),
+    .clear(Flush_ID_EX),
 
     // Data Inputs
     .program_counter_in(IF_ID_program_counter),
@@ -267,8 +279,17 @@ ID_EX ID_EX_REG(
 
 );
 // Execute Stage Wires
+// Execute Stage Wires
+
 wire [3:0] ALUControl;
+
+wire [31:0] ForwardA_Data;
+wire [31:0] ForwardB_Data;
+
+wire [31:0] ALU_operand1;
+wire [31:0] ALU_operand2_before_mux;
 wire [31:0] ALU_operand2;
+
 wire [31:0] ALU_result;
 wire zero;
 wire [31:0] branch_target;
@@ -284,22 +305,39 @@ alu_control ALU_CONTROL(
 
 );
 
-// ALU Operand MUX
+// Forwarding MUX for Operand A
 
+assign ForwardA_Data =
+        (ForwardA == 2'b00) ? ID_EX_read_data1 :
+        (ForwardA == 2'b10) ? EX_MEM_ALU_result :
+                              write_data;
+// Forwarding MUX for Operand B
+
+assign ForwardB_Data =
+        (ForwardB == 2'b00) ? ID_EX_read_data2 :
+        (ForwardB == 2'b10) ? EX_MEM_ALU_result :
+                              write_data;
+
+assign ALU_operand1 = ForwardA_Data;
+
+assign ALU_operand2_before_mux = ForwardB_Data;
+
+// ALUSrc MUX
 
 assign ALU_operand2 =
         (ALUSrc_EX) ? ID_EX_immediate :
-                      ID_EX_read_data2;
+                      ALU_operand2_before_mux;
 
-// Branch Target Adder
+// Branch Target
 
 assign branch_target =
-       ID_EX_program_counter + ID_EX_immediate;
+        ID_EX_program_counter + ID_EX_immediate;
 
+// ALU
 
-       alu ALU(
+alu ALU(
 
-    .operand_a(ID_EX_read_data1),
+    .operand_a(ALU_operand1),
     .operand_b(ALU_operand2),
 
     .ALU_control(ALUControl),
@@ -331,12 +369,12 @@ EX_MEM EX_MEM_REG(
     .clk(clk),
     .reset(reset),
 
-    .en(1'b1),
+  .en(1'b1),
     .clear(1'b0),
 
     // Data Inputs
     .ALU_result_in(ALU_result),
-    .write_data_in(ID_EX_read_data2),
+    .write_data_in(ForwardB_Data),
     .branch_target_in(branch_target),
     .program_counter_plus4_in(ID_EX_program_counter_plus4),
 
@@ -445,5 +483,42 @@ assign RegWrite_WB = MEM_WB_RegWrite;
 
 assign rd_WB = MEM_WB_rd;
 
+hazard_unit HAZARD(
+
+    // Decode Stage
+    .rs1_D(rs1),
+    .rs2_D(rs2),
+
+    // Execute Stage
+    .rs1_E(ID_EX_rs1),
+    .rs2_E(ID_EX_rs2),
+    .rd_E(ID_EX_rd),
+
+    // Memory Stage
+    .rd_M(EX_MEM_rd),
+
+    // Writeback Stage
+    .rd_W(MEM_WB_rd),
+
+    // Control Signals
+    .RegWrite_M(EX_MEM_RegWrite),
+    .RegWrite_W(MEM_WB_RegWrite),
+    .MemRead_E(MemRead_EX),
+
+    .program_counter_src_E(program_counter_src),
+    .Jump_E(Jump_EX),
+    .JumpReg_E(jumpreg_EX),
+
+    // Outputs
+    .ForwardA(ForwardA),
+    .ForwardB(ForwardB),
+
+    .program_counter_Write(program_counter_Write),
+    .IF_ID_Write(IF_ID_Write),
+
+    .Flush_IF_ID(Flush_IF_ID),
+    .Flush_ID_EX(Flush_ID_EX)
+
+);
 endmodule
 
