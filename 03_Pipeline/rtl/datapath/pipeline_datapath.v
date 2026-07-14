@@ -198,7 +198,7 @@ ID_EX ID_EX_REG(
     .read_data2_out(ID_EX_read_data2),
     .immediate_out(ID_EX_immediate),
     .rs1_out(ID_EX_rs1),
-    .rs2_out(ID_EX_rs2),
+    .rs2_out(ID_EX_rs2),  
     .rd_out(ID_EX_rd),
     .funct3_out(ID_EX_funct3),
     .funct7_out(ID_EX_funct7),
