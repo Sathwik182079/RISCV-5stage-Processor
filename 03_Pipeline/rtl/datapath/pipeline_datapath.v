@@ -167,6 +167,8 @@ wire jumpreg_EX;
 wire [1:0] ResultSrc_EX;
 wire [1:0] ALUOp_EX;
 assign program_counter_src = Branch_EX & zero;
+assign JumpTaken = Jump_EX;
+assign JALRTaken = jumpreg_EX;
 
 ID_EX ID_EX_REG(
     .clk(clk),
