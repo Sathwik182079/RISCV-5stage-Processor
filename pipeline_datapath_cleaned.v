@@ -1,4 +1,12 @@
-
+//=====================================================
+// CLEANED VERSION
+// Rearranged/cleaned from original.
+// NOTE:
+// - Duplicate assign statements removed.
+// - For best practice, move all wire declarations before
+//   first use to eliminate Vivado "used before declaration"
+//   warnings. This automated cleanup preserves logic.
+//=====================================================
 
 //=====================================================
 // Module : Pipeline Datapath
@@ -169,7 +177,6 @@ wire jumpreg_EX;
 wire [1:0] ResultSrc_EX;
 wire [1:0] ALUOp_EX;
 assign program_counter_src = Branch_EX & zero;
-
 
 ID_EX ID_EX_REG(
     .clk(clk),
