@@ -78,7 +78,7 @@ program_counter program_counter1(
 wire program_counter_src;
 
 // ==========================================
-// PRE-DECLARED WIRES (Fixes Synthesis Errors)
+// PRE-DECLARED EX WIRES (Fixes Synthesis Errors)
 // ==========================================
 wire        Jump_EX;
 wire        jumpreg_EX;
@@ -175,8 +175,8 @@ wire ALUSrc_EX;
 wire Branch_EX;
 wire [1:0] ResultSrc_EX;
 wire [1:0] ALUOp_EX;
-assign program_counter_src = Branch_EX & zero;
 
+assign program_counter_src = Branch_EX & zero;
 
 ID_EX ID_EX_REG(
     .clk(clk),
@@ -230,7 +230,6 @@ wire [31:0] ForwardB_Data;
 wire [31:0] ALU_operand1;
 wire [31:0] ALU_operand2_before_mux;
 wire [31:0] ALU_operand2;
-
 
 alu_control ALU_CONTROL(
     .ALUop(ALUOp_EX),
