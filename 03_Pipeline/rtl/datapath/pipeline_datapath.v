@@ -1,5 +1,3 @@
-
-
 //=====================================================
 // Module : Pipeline Datapath
 // Project: 5-Stage Pipelined RISC-V Processor
@@ -78,6 +76,17 @@ program_counter program_counter1(
 );
 
 wire program_counter_src;
+
+// ==========================================
+// PRE-DECLARED WIRES (Fixes Synthesis Errors)
+// ==========================================
+wire        Jump_EX;
+wire        jumpreg_EX;
+wire [31:0] ALU_result;
+wire [31:0] branch_target;
+wire        zero;
+wire [31:0] EX_MEM_ALU_result;
+// ==========================================
 
 wire JumpTaken;
 wire JALRTaken;
@@ -164,8 +173,6 @@ wire MemRead_EX;
 wire MemWrite_EX;
 wire ALUSrc_EX;
 wire Branch_EX;
-wire Jump_EX;
-wire jumpreg_EX;
 wire [1:0] ResultSrc_EX;
 wire [1:0] ALUOp_EX;
 assign program_counter_src = Branch_EX & zero;
@@ -223,9 +230,7 @@ wire [31:0] ForwardB_Data;
 wire [31:0] ALU_operand1;
 wire [31:0] ALU_operand2_before_mux;
 wire [31:0] ALU_operand2;
-wire [31:0] ALU_result;
-wire zero;
-wire [31:0] branch_target;
+
 
 alu_control ALU_CONTROL(
     .ALUop(ALUOp_EX),
@@ -263,7 +268,6 @@ alu ALU(
 );
 
 // EX/MEM Pipeline Register Wires
-wire [31:0] EX_MEM_ALU_result;
 wire [31:0] EX_MEM_write_data;
 wire [31:0] EX_MEM_branch_target;
 wire [31:0] EX_MEM_program_counter_plus4;
