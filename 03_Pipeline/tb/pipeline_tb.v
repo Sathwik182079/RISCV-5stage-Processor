@@ -1,71 +1,114 @@
-`timescale 1ns / 1ps
+//=====================================================
+// Module : Pipeline Testbench
+// Project: 5-Stage Pipelined RISC-V Processor
+// Author : T. Sathwik
+//=====================================================
 
-module tb_pipeline_advanced();
+`timescale 1ns/1ps
 
-    reg clk;
-    reg reset;
+module pipeline_tb;
 
-    // Instantiate Top Level
-    pipeline_top uut (
-        .clk(clk),
-        .reset(reset)
-    );
+reg clk;
+reg reset;
 
-    // Generate 100MHz Clock
-    initial begin
-        clk = 0;
-        forever #5 clk = ~clk;
+//-----------------------------------------------------
+// Instantiate DUT
+//-----------------------------------------------------
+
+pipeline_top DUT(
+    .clk(clk),
+    .reset(reset)
+);
+
+//-----------------------------------------------------
+// Clock Generation
+//-----------------------------------------------------
+
+always #5 clk = ~clk;
+
+//-----------------------------------------------------
+// Monitor Register Writes
+//-----------------------------------------------------
+
+always @(posedge clk)
+begin
+    if(DUT.DATAPATH.RegWrite_WB)
+    begin
+        $display("%8t | PC = %08h | INST = %08h | RD = x%0d | DATA = %0d (0x%08h)",
+                 $time,
+                 DUT.DATAPATH.program_counter,
+                 DUT.DATAPATH.instruction,
+                 DUT.DATAPATH.rd_WB,
+                 DUT.DATAPATH.write_data,
+                 DUT.DATAPATH.write_data);
+    end
+end
+
+//-----------------------------------------------------
+// Test Sequence
+//-----------------------------------------------------
+
+integer i;
+
+initial
+begin
+
+    $display("===========================================================");
+    $display("        STARTING RISC-V PIPELINE SIMULATION");
+    $display("===========================================================");
+
+    clk   = 1'b0;
+    reset = 1'b1;
+
+    // Hold reset
+    #20;
+    reset = 1'b0;
+
+    // Run simulation long enough
+    #500;
+
+    $display("");
+    $display("===========================================================");
+    $display("          FINAL REGISTER FILE CONTENTS");
+    $display("===========================================================");
+
+    for(i = 0; i < 32; i = i + 1)
+    begin
+        $display("x%-2d = %10d   (0x%08h)",
+                 i,
+                 DUT.DATAPATH.RF.registers[i],
+                 DUT.DATAPATH.RF.registers[i]);
     end
 
-    // Main Simulation Block
-    initial begin
-        // 1. Setup Waveform Dumping
-        $dumpfile("pipeline_waveform.vcd");
-        $dumpvars(0, tb_pipeline_advanced);
+    $display("===========================================================");
 
-        // 2. Setup Console Log Header
-        $display("===========================================================");
-        $display("   STARTING RISC-V PIPELINE SIMULATION");
-        $display("===========================================================");
-        $display("  TIME | FETCH PC | INSTRUCTION | DEST REG | WRITTEN VALUE");
-        $display("-----------------------------------------------------------");
+    //-------------------------------------------------
+    // Harris & Harris PASS/FAIL Check
+    //-------------------------------------------------
 
-        // 3. Reset the Processor
-        reset = 1;
-        #15; 
-        reset = 0;
-
-        // 4. Let it run for 200 nanoseconds
-        #200; 
-        
-        // 5. Print Final Register Status
-        $display("===========================================================");
-        $display("   SIMULATION COMPLETE - FINAL REGISTER STATES");
-        $display("===========================================================");
-        $display(" x1 = %0d", uut.DATAPATH.RF.registers[1]);
-        $display(" x2 = %0d", uut.DATAPATH.RF.registers[2]);
-        $display(" x3 = %0d", uut.DATAPATH.RF.registers[3]);
-        $display(" x4 = %0d", uut.DATAPATH.RF.registers[4]);
-        $display(" x5 = %0d", uut.DATAPATH.RF.registers[5]);
-        $display("===========================================================");
-        
-        $finish;
+    if(DUT.DATAPATH.RF.registers[10] == 32'd1)
+    begin
+        $display("");
+        $display("****************************************");
+        $display("***        TEST PASSED               ***");
+        $display("****************************************");
+    end
+    else
+    begin
+        $display("");
+        $display("****************************************");
+        $display("***        TEST FAILED               ***");
+        $display("*** Expected x10 = 1                ***");
+        $display("*** Actual   x10 = %0d              ***",
+                 DUT.DATAPATH.RF.registers[10]);
+        $display("****************************************");
     end
 
-    // -----------------------------------------------------------
-    // The "Spy" Block: Watch for successful Register Writes!
-    // -----------------------------------------------------------
-    always @(posedge clk) begin
-        // If Writeback stage is enabled, and we aren't writing to x0...
-        if (!reset && uut.DATAPATH.RegWrite_WB && uut.DATAPATH.rd_WB != 5'd0) begin
-            $display("%6t | %8h |   %8h  |    x%0d    | %0d",
-                     $time, 
-                     uut.DATAPATH.program_counter, // What is currently being fetched
-                     uut.DATAPATH.instruction,     // What is currently being fetched
-                     uut.DATAPATH.rd_WB,           // The register being written
-                     uut.DATAPATH.write_data       // The math/memory data being written
-            );
-        end
-    end
+    $display("");
+    $display("Simulation Finished.");
+
+    $finish;
+
+end
 
 endmodule
