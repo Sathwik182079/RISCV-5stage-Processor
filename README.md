@@ -3,9 +3,7 @@
 ## Project Description
 
 This project presents the design and implementation of a **32-bit
-5-stage pipelined RISC-V processor** in **Verilog HDL**, inspired by the
-microarchitecture described in **Digital Design and Computer
-Architecture -- RISC-V Edition** by Sarah Harris and David Harris.
+5-stage pipelined RISC-V processor** in **Verilog HDL**
 
 The processor implements the classic **Instruction Fetch (IF),
 Instruction Decode (ID), Execute (EX), Memory Access (MEM), and Write
