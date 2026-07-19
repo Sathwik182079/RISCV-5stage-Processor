@@ -27,6 +27,7 @@ branch, jump, forwarding, hazard, and register write-back operations.
 The project demonstrates a practical implementation of pipelined
 processor design concepts widely used in modern RISC processors.
 
+
 ------------------------------------------------------------------------
 
 ## Key Features
